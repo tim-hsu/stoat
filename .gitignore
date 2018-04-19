@@ -209,3 +209,19 @@ python/peacock/tests/postprocessor_tab/TestPostprocessorPluginManager_test_scrip
 !python/peacock/icons/**/*.*
 !python/peacock/tests/**/input/*.*
 peacock_tmp_diff.exo
+
+
+######################### User Added ############################
+# Ignore /lib Folder Generated from Compiling on Linux
+lib/
+
+# Ignore .o .po files and core from Joule (NETL supercomputer) logging
+*.o[0-9]*
+*.po[0-9]*
+core
+
+# Microstructural Mesh Files (too large to keep on github)
+*.inp
+
+# Ignore .log files (used for cluster job logs)
+*.log
