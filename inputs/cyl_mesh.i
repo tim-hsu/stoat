@@ -1,5 +1,5 @@
 [Mesh]
-  file = ../meshes/toy/tpb_vol_cyl_10um.msh
+  file = meshes/toy/tpb_vol_cyl_10um.msh
 []
 
 [MeshModifiers]
