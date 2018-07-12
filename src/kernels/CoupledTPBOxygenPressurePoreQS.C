@@ -52,25 +52,25 @@ CoupledTPBOxygenPressurePoreQS::CoupledTPBOxygenPressurePoreQS(const InputParame
 Real
 CoupledTPBOxygenPressurePoreQS::computeQpResidual()
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
+  Real b       = _z * _F / _R / _T;
+  Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
   Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _phi_YSZ[_qp]);
+  Real eta     = E_conc - (phi_LSM - _phi_YSZ[_qp]);
 
-  Real res  = 1e6 / _z / _F * 2 * _s0 * sinh(0.5 * b * eta);
+  Real res     = 1e6 / _z / _F * 2 * _s0 * sinh(0.5 * b * eta);
 
-  return  res * _test[_i][_qp];
+  return res * _test[_i][_qp];
 }
 
 Real
 CoupledTPBOxygenPressurePoreQS::computeQpJacobian()
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
+  Real b       = _z * _F / _R / _T;
+  Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
   Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _phi_YSZ[_qp]);
+  Real eta     = E_conc - (phi_LSM - _phi_YSZ[_qp]);
 
-  Real jac  = 1e6 / _z / _F * _s0 * cosh(0.5 * b * eta) / _u[_qp];
+  Real jac     = 1e6 / _z / _F * _s0 * cosh(0.5 * b * eta) / _u[_qp];
 
   return jac * _test[_i][_qp] * _phi[_j][_qp];
 }
@@ -78,14 +78,16 @@ CoupledTPBOxygenPressurePoreQS::computeQpJacobian()
 Real
 CoupledTPBOxygenPressurePoreQS::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
-  Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _phi_YSZ[_qp]);
-
-  Real jac  = 1e6 / _z / _F * b * _s0 * cosh(0.5 * b * eta);
-
   if (jvar == _num_phi_YSZ)
+  {
+    Real b       = _z * _F / _R / _T;
+    Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _u[_qp]);
+    Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
+    Real eta     = E_conc - (phi_LSM - _phi_YSZ[_qp]);
+
+    Real jac     = 1e6 / _z / _F * b * _s0 * cosh(0.5 * b * eta);
+
     return jac * _test[_i][_qp] * _phi[_j][_qp];
+  }
   else return 0.0;
 }

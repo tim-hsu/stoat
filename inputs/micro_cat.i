@@ -59,6 +59,19 @@
     vars = 'E_rev eta'
     vals = '1.028 0.4'
   [../]
+
+  [./funcOverpotential]
+    type = ParsedFunction
+    value = 'eta*t'
+    vars  = 'eta'
+    vals  = '0.4'
+  [../]
+
+  [./funcTimeStepper]
+    type = PiecewiseLinear
+    x = '0.0  0.1 0.5 1.0' # time_t
+    y = '0.01 0.1 0.1 0.2' # time_dt
+  [../]
 []
 
 [Materials]
@@ -90,6 +103,20 @@
     prop_names  = 'sigma_YSZ' # (S/cm)
     prop_values = '4e-2'
   [../]
+
+  [./thermalConductivityLSM]
+    type = GenericConstantMaterial
+    block = 'PT_MASK_2_TET4'
+    prop_names  = 'k_LSM'
+    prop_values = '2e-2' # (W/K/cm)
+  [../]
+
+  [./thermalConductivityYSZ]
+    type = GenericConstantMaterial
+    block = 'PT_MASK_3_TET4 PT_MASK_4_TET4'
+    prop_names  = 'k_YSZ'
+    prop_values = '2e-2' # (W/K/cm)
+  [../]
 []
 
 #==========================================================================#
@@ -111,6 +138,12 @@
     block = 'PT_MASK_3_TET4 PT_MASK_4_TET4'
     initial_condition = -0.00000 # (V)
     scaling = 1e8
+  [../]
+
+  [./T]
+    block = 'PT_MASK_2_TET4 PT_MASK_3_TET4 PT_MASK_4_TET4'
+    initial_condition = 1073.0 # (K)
+    scaling = 1
   [../]
 []
 
@@ -155,6 +188,28 @@
     #s0 = 1e-7 * 680e6 * 20 # (A/cm^3)
     function_phi_LSM = 'funcPotentialLSM'
   [../]
+
+  [./thermalTransportLSM]
+    type = HeatConduction
+    block = 'PT_MASK_2_TET4'
+    variable = T
+    diffusion_coefficient = 'k_LSM' # (W/K/cm)
+  [../]
+
+  [./thermalTransportYSZ]
+    type = HeatConduction
+    block = 'PT_MASK_3_TET4 PT_MASK_4_TET4'
+    variable = T
+    diffusion_coefficient = 'k_YSZ' # (W/K/cm)
+  [../]
+
+  [./jouleHeatingYSZ]
+    type = JouleHeatingConstMaterial
+    block = 'PT_MASK_3_TET4 PT_MASK_4_TET4'
+    variable = T
+    elec = phi_YSZ
+    conductivity = 'sigma_YSZ' # (S/cm)
+  [../]
 []
 
 #==========================================================================#
@@ -194,6 +249,20 @@
     boundary = 'SF_MASK_3_WITH_ZMAX'
     value = 0.00000 # (V)
   [../]
+
+  [./temperature_top]
+    type = DirichletBC
+    variable = T
+    boundary = 'SF_MASK_2_WITH_ZMIN SF_MASK_3_WITH_ZMIN'
+    value = 1073.0 # (K)
+  [../]
+
+  [./temperature_bottom]
+    type = DirichletBC
+    variable = T
+    boundary = 'SF_MASK_3_WITH_ZMAX'
+    value = 1073.0 # (K)
+  [../]
 []
 
 #==========================================================================#
@@ -206,12 +275,6 @@
   [./aux_Erev_LSM]
     block = 'PT_MASK_2_TET4 PT_MASK_4_TET4'
   [../]
-
-  #[./aux_phi_YSZ_gradNorm]
-  #  block = 'PT_MASK_4_TET4'
-  #  order = CONSTANT
-  #  family = MONOMIAL
-  #[../]
 []
 
 [AuxKernels]
@@ -232,13 +295,6 @@
     constant_expressions = '8.3144598 1073 96485.33289' # (J/K/mol), (K), (C/mol)
     args = 'aux_pO2_LSM'
   [../]
-
-  #[./phi_YSZ_gradNorm]
-  #  type = VariableGradientNorm
-  #  block = 'PT_MASK_4_TET4'
-  #  variable = aux_phi_YSZ_gradNorm
-  #  gradient_variable = 'phi_YSZ'
-  #[../]
 []
 
 #==========================================================================#
@@ -265,6 +321,12 @@
     function = 'funcPotentialLSM'
     outputs = 'console csv'
   [../]
+
+  [./eta_total]
+    type = FunctionValuePostprocessor
+    function = 'funcOverpotential'
+    outputs = 'console csv'
+  [../]
 []
 
 #==========================================================================#
@@ -288,10 +350,10 @@
   nl_abs_tol = 1e-10
   l_tol = 1e-3
   l_max_its = 20000
+
   [./TimeStepper]
     type = FunctionDT
-    time_t =  '0.0  0.1 0.5 1.0'
-    time_dt = '0.01 0.1 0.1 0.2'
+    function = funcTimeStepper
   [../]
   solve_type = 'NEWTON'
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

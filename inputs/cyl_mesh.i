@@ -1,5 +1,6 @@
 [Mesh]
-  file = meshes/toy/tpb_vol_cyl_10um.msh
+  # file = meshes/toy/tpb_vol_cyl_10um.msh
+  file = ../../gmsh/tpb_vol_cyl_10um_debug.msh
 []
 
 [MeshModifiers]
@@ -57,6 +58,19 @@
     vars = 'E_rev eta'
     vals = '1.028 0.4'
   [../]
+
+  [./funcOverpotential]
+    type = ParsedFunction
+    value = 'eta*t'
+    vars  = 'eta'
+    vals  = '0.4'
+  [../]
+
+  [./funcTimeStepper]
+    type = PiecewiseLinear
+    x = '0.0  0.1 0.5 1.0' # time_t
+    y = '0.01 0.1 0.1 0.2' # time_dt
+  [../]
 []
 
 [Materials]
@@ -88,6 +102,20 @@
     prop_names  = 'sigma_YSZ' # (S/cm)
     prop_values = '4e-2'
   [../]
+
+  [./thermalConductivityLSM]
+    type = GenericConstantMaterial
+    block = 'phase2'
+    prop_names  = 'k_LSM'
+    prop_values = '2e-2' # (W/K/cm)
+  [../]
+
+  [./thermalConductivityYSZ]
+    type = GenericConstantMaterial
+    block = 'phase3 phase4'
+    prop_names  = 'k_YSZ'
+    prop_values = '2e-2' # (W/K/cm)
+  [../]
 []
 
 #==========================================================================#
@@ -109,6 +137,12 @@
     block = 'phase3 phase4'
     initial_condition = -0.00000 # (V)
     scaling = 2e8
+  [../]
+
+  [./T]
+    block = 'phase2 phase3 phase4'
+    initial_condition = 1073 # (K)
+    scaling = 1
   [../]
 []
 
@@ -153,6 +187,28 @@
     s0 = 136 # (A/cm^3) (6.8 * 20)
     function_phi_LSM = 'funcPotentialLSM'
   [../]
+
+  [./thermalTransportLSM]
+    type = HeatConduction
+    block = 'phase2'
+    variable = T
+    diffusion_coefficient = 'k_LSM' # (W/K/cm)
+  [../]
+
+  [./thermalTransportYSZ]
+    type = HeatConduction
+    block = 'phase3 phase4'
+    variable = T
+    diffusion_coefficient = 'k_YSZ' # (W/K/cm)
+  [../]
+
+  [./jouleHeatingYSZ]
+    type = JouleHeatingConstMaterial
+    block = 'phase3 phase4'
+    variable = T
+    elec = phi_YSZ
+    conductivity = 'sigma_YSZ' # (S/cm)
+  [../]
 []
 
 #==========================================================================#
@@ -191,6 +247,20 @@
     variable = phi_YSZ
     boundary = 'phase3_bottom'
     value = 0.00000 # (V)
+  [../]
+
+  [./temperature_top]
+    type = DirichletBC
+    variable = T
+    boundary = 'phase2_top phase3_top'
+    value = 1073.0 # (K)
+  [../]
+
+  [./temperature_bottom]
+    type = DirichletBC
+    variable = T
+    boundary = 'phase2_bottom phase3_bottom'
+    value = 1073.0 # (K)
   [../]
 []
 
@@ -250,6 +320,12 @@
     function = 'funcPotentialLSM'
     outputs = 'console csv'
   [../]
+
+  [./eta_total]
+    type = FunctionValuePostprocessor
+    function = 'funcOverpotential'
+    outputs = 'console csv'
+  [../]
 []
 
 #==========================================================================#
@@ -275,14 +351,16 @@
   start_time = 0.0
   end_time = 1.0
   dtmin = 1e-5
-  nl_rel_tol = 1e-7
-  nl_abs_tol = 1e-10
-  l_tol = 1e-04
+  nl_rel_tol = 1e-20
+  nl_rel_step_tol = 1e-14
+  # nl_abs_tol = 1e-10
+  # l_tol = 1e-04
+  # l_abs_step_tol = -1
   l_max_its = 1000
+
   [./TimeStepper]
     type = FunctionDT
-    time_t =  '0.0  0.1 0.5 1.0'
-    time_dt = '0.01 0.1 0.1 0.2'
+    function = funcTimeStepper
   [../]
 
   solve_type = 'NEWTON'
@@ -298,8 +376,8 @@
   exodus = true
   csv = true
   file_base = outputs/toy/cyl_cat_23PB
-  #append_date = true
-  #append_date_format = '%Y-%m-%d'
+  append_date = true
+  append_date_format = '%Y-%m-%d'
   #print_perf_log = true
 []
 

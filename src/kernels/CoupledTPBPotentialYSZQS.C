@@ -52,12 +52,12 @@ CoupledTPBPotentialYSZQS::CoupledTPBPotentialYSZQS(const InputParameters & param
 Real
 CoupledTPBPotentialYSZQS::computeQpResidual()
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
+  Real b       = _z * _F / _R / _T;
+  Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
   Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _u[_qp]);
+  Real eta     = E_conc - (phi_LSM - _u[_qp]);
 
-  Real res  = 2 * _s0 * sinh(0.5 * b * eta);
+  Real res     = 2 * _s0 * sinh(0.5 * b * eta);
 
   return res * _test[_i][_qp];
 }
@@ -65,12 +65,12 @@ CoupledTPBPotentialYSZQS::computeQpResidual()
 Real
 CoupledTPBPotentialYSZQS::computeQpJacobian()
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
+  Real b       = _z * _F / _R / _T;
+  Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
   Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _u[_qp]);
+  Real eta     = E_conc - (phi_LSM - _u[_qp]);
 
-  Real jac  = b * _s0 * cosh(0.5 * b * eta);
+  Real jac     = b * _s0 * cosh(0.5 * b * eta);
 
   return jac * _test[_i][_qp] * _phi[_j][_qp];
 }
@@ -78,14 +78,16 @@ CoupledTPBPotentialYSZQS::computeQpJacobian()
 Real
 CoupledTPBPotentialYSZQS::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  Real b    = _z * _F / _R / _T;
-  Real E_conc = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
-  Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
-  Real eta  = E_conc - (phi_LSM - _u[_qp]);
-
-  Real jac  = _s0 * cosh(0.5 * b * eta) / _p_O2[_qp];
-
   if (jvar == _num_p_O2)
+  {
+    Real b       = _z * _F / _R / _T;
+    Real E_conc  = - _R * _T / _z / _F * log(_pO2_CE / _p_O2[_qp]);
+    Real phi_LSM = _func_phi_LSM.value(_t, _q_point[_qp]);
+    Real eta     = E_conc - (phi_LSM - _u[_qp]);
+
+    Real jac     = _s0 * cosh(0.5 * b * eta) / _p_O2[_qp];
+
     return jac * _test[_i][_qp] * _phi[_j][_qp];
+  }
   else return 0.0;
 }
