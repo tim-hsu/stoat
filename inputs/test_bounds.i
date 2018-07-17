@@ -156,7 +156,7 @@
 
 [Outputs]
   execute_on = 'TIMESTEP_END'
-  file_base = output_files/test_bounds
+  file_base = outputs/tests/test_bounds
   exodus = true
   append_date = true
   append_date_format = '%Y-%m-%d'

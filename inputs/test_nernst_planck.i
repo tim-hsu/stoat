@@ -118,7 +118,6 @@
 #==========================================================================#
 
 [Outputs]
-  execute_on = 'timestep_end'
   exodus = true
-  file_base = output_files/test_NP
+  file_base = outputs/tests/nernst-planck
 []
