@@ -37,7 +37,8 @@ JouleHeatingConstMaterial::computeQpResidual()
 Real
 JouleHeatingConstMaterial::computeQpJacobian()
 {
-  return -_elec_cond[_qp] * _grad_elec[_qp] * _grad_elec[_qp] * _phi[_j][_qp] * _test[_i][_qp];
+  // return -_elec_cond[_qp] * _grad_elec[_qp] * _grad_elec[_qp] * _phi[_j][_qp] * _test[_i][_qp];
+  return 0.0;
 }
 
 Real

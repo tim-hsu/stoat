@@ -367,7 +367,7 @@
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
   #petsc_options_value = 'hypre boomeramg 50'
   petsc_options_iname = '-ksp_gmres_restart -pc_type'
-  petsc_options_value = '50 bjacobi'
+  petsc_options_value = '101 bjacobi'
 []
 
 #==========================================================================#
@@ -375,7 +375,7 @@
 [Outputs]
   exodus = true
   csv = true
-  file_base = outputs/toy/cyl_cat_23PB
+  file_base = outputs/toy/cyl-cat-23PB
   append_date = true
   append_date_format = '%Y-%m-%d'
   #print_perf_log = true

@@ -143,7 +143,7 @@
   [./T]
     block = 'PT_MASK_2_TET4 PT_MASK_3_TET4 PT_MASK_4_TET4'
     initial_condition = 1073.0 # (K)
-    scaling = 1
+    scaling = 1e15
   [../]
 []
 

@@ -84,10 +84,11 @@
 
 [Executioner]
   type = Steady
-  # Preconditioned JFNK (default)
-  solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  solve_type = 'NEWTON'
+  petsc_options_iname = '-ksp_gmres_restart -pc_type -sub_pc_type'
+  petsc_options_value = '101 bjacobi ilu'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre boomeramg'
 []
 
 [Outputs]
