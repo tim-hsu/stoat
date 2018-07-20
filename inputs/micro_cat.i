@@ -44,12 +44,10 @@
 #==========================================================================#
 
 [GlobalParams]
-# E_rev   = 1.028   # (V)
-# phi_LSM = 0.928   # (V)
   pO2_CE  = 1e-20   # (atm)
-
-# source activity = lineal activity * tpb density * inverse volume fraction
-# s0      = 8138.3  # (A/cm^3)
+  function_phi_LSM = 'funcPotentialLSM' # (V)
+  # source activity = lineal activity * tpb density * inverse volume fraction
+  # s0      = 8138.3  # (A/cm^3)
 [../]
 
 [Functions]
@@ -125,7 +123,7 @@
   [./p_O2]
     block = 'PT_MASK_1_TET4 PT_MASK_4_TET4'
     initial_condition = 0.21 # (atm)
-    scaling = 1e6
+    scaling = 1e4
   [../]
 
   [./V_O]
@@ -137,13 +135,13 @@
   [./phi_YSZ]
     block = 'PT_MASK_3_TET4 PT_MASK_4_TET4'
     initial_condition = -0.00000 # (V)
-    scaling = 1e8
+    scaling = 1e7
   [../]
 
   [./T]
     block = 'PT_MASK_2_TET4 PT_MASK_3_TET4 PT_MASK_4_TET4'
     initial_condition = 1073.0 # (K)
-    scaling = 1e15
+    scaling = 1e2
   [../]
 []
 
@@ -176,8 +174,6 @@
     block = 'PT_MASK_4_TET4'
     variable = p_O2
     phi_YSZ = phi_YSZ
-    #s0 = 1e-7 * 680e6 * 20 # (A/cm^3)
-    function_phi_LSM = 'funcPotentialLSM'
   [../]
 
   [./tpbReactionPotentialYSZ]
@@ -185,8 +181,6 @@
     block = 'PT_MASK_4_TET4'
     variable = phi_YSZ
     p_O2 = p_O2
-    #s0 = 1e-7 * 680e6 * 20 # (A/cm^3)
-    function_phi_LSM = 'funcPotentialLSM'
   [../]
 
   [./thermalTransportLSM]
@@ -209,6 +203,14 @@
     variable = T
     elec = phi_YSZ
     conductivity = 'sigma_YSZ' # (S/cm)
+  [../]
+
+  [./tpbHeating]
+    type = OverpotentialHeatingTPB
+    block = 'phase4'
+    variable = T
+    p_O2 = p_O2
+    phi_YSZ = phi_YSZ
   [../]
 []
 

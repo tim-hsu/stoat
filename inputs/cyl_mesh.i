@@ -46,9 +46,9 @@
 #==========================================================================#
 
 [GlobalParams]
-# E_rev   = 1.028   # (V)
-# phi_LSM = 0.928   # (V)
   pO2_CE  = 1e-20   # (atm)
+  function_phi_LSM = 'funcPotentialLSM' # (V)
+  s0 = 1e3 # (A/cm^3) (6.8 * 20)
 [../]
 
 [Functions]
@@ -124,7 +124,7 @@
   [./p_O2]
     block = 'phase1 phase4'
     initial_condition = 0.21 # (atm)
-    scaling = 1e5
+    scaling = 1e4
   [../]
 
   [./V_O]
@@ -136,13 +136,13 @@
   [./phi_YSZ]
     block = 'phase3 phase4'
     initial_condition = -0.00000 # (V)
-    scaling = 2e8
+    scaling = 1e7
   [../]
 
   [./T]
     block = 'phase2 phase3 phase4'
     initial_condition = 1073 # (K)
-    scaling = 1
+    scaling = 1e2
   [../]
 []
 
@@ -175,8 +175,6 @@
     block = 'phase4'
     variable = p_O2
     phi_YSZ = phi_YSZ
-    s0 = 136 # (A/cm^3) (6.8 * 20)
-    function_phi_LSM = 'funcPotentialLSM'
   [../]
 
   [./tpbReactionPotentialYSZ]
@@ -184,8 +182,6 @@
     block = 'phase4'
     variable = phi_YSZ
     p_O2 = p_O2
-    s0 = 136 # (A/cm^3) (6.8 * 20)
-    function_phi_LSM = 'funcPotentialLSM'
   [../]
 
   [./thermalTransportLSM]
@@ -202,12 +198,20 @@
     diffusion_coefficient = 'k_YSZ' # (W/K/cm)
   [../]
 
-  [./jouleHeatingYSZ]
-    type = JouleHeatingConstMaterial
-    block = 'phase3 phase4'
+  # [./jouleHeatingYSZ]
+  #   type = JouleHeatingConstMaterial
+  #   block = 'phase3 phase4'
+  #   variable = T
+  #   elec = phi_YSZ
+  #   conductivity = 'sigma_YSZ' # (S/cm)
+  # [../]
+
+  [./tpbHeating]
+    type = OverpotentialHeatingTPB
+    block = 'phase4'
     variable = T
-    elec = phi_YSZ
-    conductivity = 'sigma_YSZ' # (S/cm)
+    p_O2 = p_O2
+    phi_YSZ = phi_YSZ
   [../]
 []
 
