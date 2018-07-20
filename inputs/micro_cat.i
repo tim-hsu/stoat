@@ -207,7 +207,7 @@
 
   [./tpbHeating]
     type = OverpotentialHeatingTPB
-    block = 'phase4'
+    block = 'PT_MASK_4_TET4'
     variable = T
     p_O2 = p_O2
     phi_YSZ = phi_YSZ
