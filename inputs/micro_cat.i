@@ -54,8 +54,8 @@
   [./funcPotentialLSM]
     type = ParsedFunction
     value = 'E_rev - eta*t'
-    vars = 'E_rev eta'
-    vals = '1.028 0.4'
+    vars = 'E_rev   eta'
+    vals = '1.02845 0.4'
   [../]
 
   [./funcOverpotential]
@@ -231,7 +231,6 @@
     neighbor_var = phi_YSZ
     boundary = 'interface_23'
     j0 = 0.193  # (A/cm^2)
-    function_phi_LSM = 'funcPotentialLSM'
   [../]
 []
 

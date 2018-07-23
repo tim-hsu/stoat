@@ -1,6 +1,6 @@
 [Mesh]
-  # file = meshes/toy/tpb_vol_cyl_10um.msh
-  file = ../../gmsh/tpb_vol_cyl_10um_debug.msh
+  file = ../../gmsh/tpb_vol_cyl.msh
+  # file = ../../gmsh/tpb_vol_cyl_10um_debug.msh
 []
 
 [MeshModifiers]
@@ -55,8 +55,8 @@
   [./funcPotentialLSM]
     type = ParsedFunction
     value = 'E_rev - eta*t'
-    vars = 'E_rev eta'
-    vals = '1.028 0.4'
+    vars = 'E_rev   eta'
+    vals = '1.02845 0.4'
   [../]
 
   [./funcOverpotential]
@@ -142,7 +142,7 @@
   [./T]
     block = 'phase2 phase3 phase4'
     initial_condition = 1073 # (K)
-    scaling = 1e2
+    scaling = 1e4
   [../]
 []
 
