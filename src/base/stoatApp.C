@@ -4,25 +4,6 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
-// stork codes are listed below
-// #include "CoupledTPBOxygenPressurePore.h"
-// #include "CoupledTPBOxygenPressurePoreQS.h"
-// #include "CoupledTPBPotentialYSZ.h"
-// #include "CoupledTPBPotentialYSZQS.h"
-// #include "CoupledButlerForce.h"
-// #include "CoupledNernstDrift.h"
-// #include "CoupledTafelPore.h"
-// #include "CoupledTafelYSZ.h"
-// #include "DiffMatKernel.h"
-// #include "InterfaceSurfExchange.h"
-// #include "InterfaceSurfExchangeFullyCoupled.h"
-// #include "InterfaceChargeTransferFullyCoupled.h"
-// #include "InterfaceChargeTransferFullyCoupledQS.h"
-// #include "InterfaceChargeTransferButler.h"
-// #include "ChargeTransferNBC.h"
-// #include "ChargeTransferButlerNBC.h"
-// #include "SurfExNBC.h"
-// #include "VariableGradientNorm.h"
 
 template <>
 InputParameters
